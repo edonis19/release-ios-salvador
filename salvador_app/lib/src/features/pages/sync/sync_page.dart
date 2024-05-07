@@ -73,6 +73,7 @@ for (var riga in intervento.righe) {
                             note: null,
                             noteDaStampare: null,
                             matricola: riga.matricola,
+                            dtOraIns: riga.dtOraIns.toString(),
                             info: null,
                             warning: null,
                             error: null, 

@@ -26,45 +26,50 @@ class InterventiApertiDataSource extends DataGridSource {
   List<DataGridRow> get rows {
     List<DataGridRow> rows = [];
 
-    rows.addAll(data.map((intervento) {
-      InterventoCliente? cliente = intervento.cliente;
-      List<Riga> righe = intervento.righe;
+rows.addAll(data.map((intervento) {
+  InterventoCliente? cliente = intervento.cliente;
+  List<Riga> righe = intervento.righe;
 
-      //String? righeDescrizione = righe.isNotEmpty ? righe[0].descrizione : '';
-      String? note = intervento.note ?? '';
-      String? dataDocFormatted;
-      dataDocFormatted = DateFormat('dd/MM/yyyy').format(intervento.dataDoc);
-      return DataGridRow(cells: [
-        DataGridCell<String>(
-          columnName: 'idTestata',
-          value: '${intervento.idTestata}',
-        ),
-        const DataGridCell<Widget>(columnName: 'button', value: null),
-        DataGridCell<String>(
-            columnName: 'numDoc', value: '${intervento.numDoc}'),
-        DataGridCell<String>(columnName: 'dataDoc', value: dataDocFormatted),
-        DataGridCell<String>(
-          columnName: 'righe.descrizione',
-          value: note,
-        ),
-        DataGridCell<String>(
-          columnName: 'cliente.descrizione',
-          value: '${cliente?.descrizione}',
-        ),
-        DataGridCell<String>(
-          columnName: 'cliente.indirizzo',
-          value: '${cliente?.indirizzo}',
-        ),
-        DataGridCell<String>(
-          columnName: 'cliente.telefono1',
-          value: '${cliente?.telefono1}',
-        ),
-        DataGridCell<String>(
-          columnName: 'status',
-          value: '${intervento.status}',
-        ),
-      ]);
-    }).toList());
+  String? note = intervento.note ?? '';
+  String? dataDocFormatted = DateFormat('dd/MM/yyyy').format(intervento.dataDoc);
+
+  return DataGridRow(cells: [
+    DataGridCell<String>(
+      columnName: 'idTestata',
+      value: '${intervento.idTestata}',
+    ),
+    const DataGridCell<Widget>(columnName: 'button', value: null),
+    DataGridCell<String>(
+      columnName: 'numDoc',
+      value: '${intervento.numDoc ?? ''}',
+    ),
+    DataGridCell<String>(
+      columnName: 'dataDoc',
+      value: dataDocFormatted,
+    ),
+    DataGridCell<String>(
+      columnName: 'righe.descrizione',
+      value: note.isNotEmpty ? note : '',
+    ),
+    DataGridCell<String>(
+      columnName: 'cliente.descrizione',
+      value: cliente?.descrizione ?? '',
+    ),
+    DataGridCell<String>(
+      columnName: 'cliente.indirizzo',
+      value: cliente?.indirizzo ?? '', 
+    ),
+    DataGridCell<String>(
+      columnName: 'cliente.telefono1',
+      value: cliente?.telefono1 ?? '',
+    ),
+    DataGridCell<String>(
+      columnName: 'status',
+      value: '${intervento.status}',
+    ),
+  ]);
+}).toList());
+
 
     rows.addAll(nuovoIntervento.map((nuovoIntervento) {
       var cliente = nuovoIntervento.cliente;

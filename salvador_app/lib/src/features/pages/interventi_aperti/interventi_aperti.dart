@@ -35,10 +35,8 @@ class InterventiApertiPage extends ConsumerWidget {
         nuovoInterventoList = data;
       },
       loading: () {
-        // Gestisci il caso in cui i dati siano ancora in caricamento
       },
       error: (error, stackTrace) {
-        // Gestisci il caso in cui si sia verificato un errore durante il recupero dei dati
       },
     );
 
@@ -241,7 +239,6 @@ Widget _buildFilterDialog(BuildContext context, WidgetRef ref) {
                       labelText: 'Targa/N°',
                       labelStyle: const TextStyle(fontSize: 16.0),
                       border: OutlineInputBorder(
-                        // Bordo esterno
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       focusedBorder: OutlineInputBorder(

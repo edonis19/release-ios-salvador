@@ -200,6 +200,7 @@ class Riga with _$Riga {
     required String? origine,
     required String? matricola,
     required bool? gestioneLotti,
+    required DateTime? dtOraIns,
     required bool? recordCancellato,
     required bool? recordSelezionato,
     required bool? recordInviato,

@@ -7,7 +7,7 @@ part of 'intervento_aperto_state.dart';
 // **************************************************************************
 
 String _$interventoApertoStateHash() =>
-    r'6126c059f3ecd860077c7c523b3ad0b742e001be';
+    r'98156014bc1b4a831eb3754fe2a1c0cc8884f411';
 
 /// See also [InterventoApertoState].
 @ProviderFor(InterventoApertoState)

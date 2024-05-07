@@ -1,5 +1,3 @@
-import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:salvador_task_management/src/models/articolo_model.dart';
@@ -21,15 +19,21 @@ class InterventoApertoState extends _$InterventoApertoState {
   }
 
   void addRiga(Articolo item, Map<String, dynamic> params, Map<String, dynamic> resultMapDocId) {
-    //double? qtaDouble = double.tryParse(params['quantita']);
     var intervento = state;
     int countRighe = state.righe.length;
+    int rigaAdd = countRighe + 1; 
+
+        DateTime now = DateTime.now();
+
+    String? formattedDateTime = "${now.year}-${_twoDigits(now.month)}-${_twoDigits(now.day)} ${_twoDigits(now.hour)}:${_twoDigits(now.minute)}:${_twoDigits(now.second)}";
+      DateTime dtOraIns = DateTime.parse(formattedDateTime);
+
     var nuovaRiga = Riga(
       id: null,
       idTestata: intervento.idTestata,
       idRiga: null,
       numOrdine: null,
-      riga: countRighe++,
+      riga: rigaAdd,
       descrizione: params['note'],
       barcode: null,
       statusEvasione: null,
@@ -134,6 +138,7 @@ class InterventoApertoState extends _$InterventoApertoState {
       origine: null,
       matricola: null,
       gestioneLotti: false,
+      dtOraIns: dtOraIns,
       recordCancellato: false,
       recordSelezionato: false,
       recordInviato: false,
@@ -145,10 +150,8 @@ class InterventoApertoState extends _$InterventoApertoState {
       docId: resultMapDocId['docId'],
     );
 
-    // Aggiungi la nuova riga alla lista delle righe dell'intervento
     intervento.righe.add(nuovaRiga);
 
-    // Imposta il flag dirty per indicare che lo stato è stato modificato
     intervento.isDirty = true;
 
     state = intervento;
@@ -160,16 +163,22 @@ class InterventoApertoState extends _$InterventoApertoState {
   }
 
 
-   void addRigaQuantita(Articolo? item, Map<String, dynamic> params, Map<String, dynamic> resultMapDocId) {
-    //double? qtaDouble = double.tryParse(params['quantita']);
+void addRigaQuantita(Articolo? item, Map<String, dynamic> params, Map<String, dynamic> resultMapDocId) {
+    DateTime now = DateTime.now();
+
+    String? formattedDateTime = "${now.year}-${_twoDigits(now.month)}-${_twoDigits(now.day)} ${_twoDigits(now.hour)}:${_twoDigits(now.minute)}:${_twoDigits(now.second)}";
+      DateTime dtOraIns = DateTime.parse(formattedDateTime);
+
     var intervento = state;
     int countRighe = state.righe.length;
+    int rigaAdd = countRighe + 1; 
+
     var nuovaRiga = Riga(
       id: null,
       idTestata: intervento.idTestata,
       idRiga: null,
       numOrdine: null,
-      riga: countRighe++,
+      riga: rigaAdd,
       descrizione: params['note'],
       barcode: null,
       statusEvasione: null,
@@ -274,6 +283,7 @@ class InterventoApertoState extends _$InterventoApertoState {
       origine: null,
       matricola: null,
       gestioneLotti: false,
+      dtOraIns: dtOraIns,
       recordCancellato: false,
       recordSelezionato: false,
       recordInviato: false,
@@ -285,28 +295,26 @@ class InterventoApertoState extends _$InterventoApertoState {
       docId: resultMapDocId['docId']
     );
 
-    // Aggiungi la nuova riga alla lista delle righe dell'intervento
     intervento.righe.add(nuovaRiga);
-
-    // Imposta il flag dirty per indicare che lo stato è stato modificato
     intervento.isDirty = true;
-
     state = intervento;
 
-                            var interventiDbProvider =
-                        ref.read(interventiDbRepositoryProvider.notifier);
+    var interventiDbProvider = ref.read(interventiDbRepositoryProvider.notifier);
 
   interventiDbProvider.saveChanges(state);
   }
 
+String _twoDigits(int n) {
+  if (n >= 10) return "$n";
+  return "0$n";
+}
+
 
 
 void updateRigaQuantita(Riga riga, double? nuovaQuantita, WidgetRef ref) {
-  var intervento = state;
-  var index = riga.riga; // Use the value of riga.riga as the index
+  final int? index = riga.riga;
 
-  if (index! >= 0 && index < state.righe.length) {
-
+  if (index! >= 0 && index - 1 < state.righe.length) {
     state.righe[index].qta = nuovaQuantita;
     
     state.isDirty = true;
@@ -323,14 +331,21 @@ void updateRigaQuantita(Riga riga, double? nuovaQuantita, WidgetRef ref) {
 
 
 void addOrUpdateNota(Map<String, dynamic> params) {
-    var intervento = state;
+  
     int countRighe = state.righe.length;
+    int rigaAdd = countRighe + 1; 
+
+    DateTime now = DateTime.now();
+
+    String? formattedDateTime = "${now.year}-${_twoDigits(now.month)}-${_twoDigits(now.day)} ${_twoDigits(now.hour)}:${_twoDigits(now.minute)}:${_twoDigits(now.second)}";
+      DateTime dtOraIns = DateTime.parse(formattedDateTime);
+
   var nuovaRiga = Riga(
                             id: null,
                             idTestata: null,
                             idRiga: null,
                             numOrdine: null,
-                            riga: countRighe++,
+                            riga: rigaAdd,
                             descrizione: params['note'],
                             barcode: null,
                             statusEvasione: null,
@@ -435,6 +450,7 @@ void addOrUpdateNota(Map<String, dynamic> params) {
                             origine: null,
                             matricola: null,
                             gestioneLotti: false,
+                            dtOraIns: dtOraIns,
                             recordCancellato: false,
                             recordSelezionato: false,
                             recordInviato: false,
@@ -446,20 +462,16 @@ void addOrUpdateNota(Map<String, dynamic> params) {
                             docId: 0,
                           );
 
-  // Aggiungi la nuova riga alla lista delle righe dell'intervento
   state.righe.add(nuovaRiga);
 
-  // Imposta il flag dirty per indicare che lo stato è stato modificato
   state.isDirty = true;
-
                         var interventiDbProvider =
                         ref.read(interventiDbRepositoryProvider.notifier);
-
   interventiDbProvider.saveChanges(state);
 }
 
 void removeRiga(WidgetRef ref, int numRiga) {
-  int numIndex = numRiga;
+  int numIndex = numRiga -1;
   if (numIndex >= 0 && numIndex < state.righe.length) {
     state.righe.removeAt(numIndex);
     var interventiDbProvider = ref.read(interventiDbRepositoryProvider.notifier);

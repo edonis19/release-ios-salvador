@@ -120,6 +120,7 @@ class RigaInvio {
   final String? note;
   final String? noteDaStampare;
   final String? matricola;
+  final String? dtOraIns;
   final String? info;
   final String? warning;
   final String? error;
@@ -138,6 +139,7 @@ class RigaInvio {
     required this.note,
     required this.noteDaStampare,
     required this.matricola,
+    required this.dtOraIns,
     required this.info,
     required this.warning,
     required this.error
@@ -158,6 +160,7 @@ class RigaInvio {
       'note': note,
       'noteDaStampare': noteDaStampare,
       'matricola': matricola,
+      'dtOraIns': dtOraIns,
       'info': info,
       'warning': warning,
       'error': error,

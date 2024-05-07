@@ -35,12 +35,16 @@ class RegistrazioneInterventoPage extends ConsumerWidget {
   TimeOfDay? initialStartTime;
   TimeOfDay? initialEndTime;
   Articolo? articolo;
+  Intervento? articoloIntervento;
   double? nuovaQuantita;
+  double? quantity;
+  String? notes;
 
   RegistrazioneInterventoPage({
     super.key,
     this.articolo,
     this.nuovaQuantita,
+    this.articoloIntervento,
   });
 
   @override
@@ -117,26 +121,38 @@ class RegistrazioneInterventoPage extends ConsumerWidget {
                             GridLinesVisibility.horizontal,
                         gridLinesVisibility: GridLinesVisibility.both,
                         allowEditing: true,
-                        onCellTap: (details) {
-                          final int idRiga = int.parse(
-                              details.rowColumnIndex.rowIndex.toString());
-                          final articolo = intervento.righe
-                              .where((element) => element.idRiga == idRiga)
-                              .firstOrNull;
+                                               onCellTap: (details) {
+  final int idRiga = int.parse(details.rowColumnIndex.rowIndex.toString());
+  final int idRigaIndex = idRiga - 1;
+  final riga = intervento.righe.firstWhereOrNull((element) => element.riga == idRigaIndex);
 
-                          if (articolo != null) {
-                            final String columnName = details.column.columnName;
+  if (riga != null) {
+    final String columnName = details.column.columnName;
+    final isNoteNullOrEmpty = riga.note == null || riga.note!.isEmpty;
 
-                            final isNoteNullOrEmpty =
-                                articolo.note == null || articolo.note!.isEmpty;
+        double? qtaArt = intervento.righe.firstWhere(
+    (element) => element.riga == riga.riga,).qta;
 
-                            if (columnName == 'quantita' ||
-                                (columnName == 'note' && isNoteNullOrEmpty)) {
-                              modifyDurataDialog(context, articolo, nuovaQuantita, ref);
-                            } else if (columnName == 'durata' ||
-                                (columnName == 'note' && !isNoteNullOrEmpty)) {
-                              modifyDurataDialog(context, articolo, nuovaQuantita, ref);
-                            }
+    if ([
+      'SMANCAR',
+      'SMANCLI',
+      'SMANEST',
+      'SMANEST+40%',
+      'SMANESTFES',
+      'SMANFES',
+      'SMANINT',
+      'SMANSTD'
+    ].contains(riga.articolo?.codice)) {
+      modifyDurataDialog(context, riga, nuovaQuantita, ref);
+    } else {
+      if (columnName == 'quantita' || (columnName == 'note' && isNoteNullOrEmpty)) {
+        modifyDettagliDialog(context, articolo, intervento, ref, riga, qtaArt, quantity!, notes!);
+      } else if (columnName == 'durata' || (columnName == 'note' && !isNoteNullOrEmpty)) {
+        modifyDurataDialog(context, riga, nuovaQuantita, ref);
+      } if (columnName == 'elimina') {
+    // Non fare nulla se il valore della cella è "RO"
+}
+    }
                           }
                         },
                       ),
@@ -200,40 +216,34 @@ class RegistrazioneInterventoPage extends ConsumerWidget {
                             GridLinesVisibility.horizontal,
                         gridLinesVisibility: GridLinesVisibility.both,
                         allowEditing: true,
-                        onCellTap: (details) {
-final int idRiga = int.parse(details.rowColumnIndex.rowIndex.toString());
-final int idRigaIndex = idRiga - 1;
-final riga = intervento.righe.firstWhereOrNull((element) => element.riga == idRigaIndex);
+onCellTap: (details) {
+  final int idRiga = int.parse(details.rowColumnIndex.rowIndex.toString());
+  final riga = intervento.righe.firstWhereOrNull((element) => element.riga == idRiga);
+  
+  if (riga != null) {
+    final idRigaModify = riga.idRiga;
 
+    if (idRigaModify == null) {
+      final String columnName = details.column.columnName;
+      double qtaArt = riga.qta ?? 0.0;
 
-                          if (riga != null) {
-                            final String columnName = details.column.columnName;
-
-                            final isNoteNullOrEmpty =
-                                riga.note == null || riga.note!.isEmpty;
-
-                            if ([
-                              'SMANCAR',
-                              'SMANCLI',
-                              'SMANEST',
-                              'SMANEST+40%',
-                              'SMANESTFES',
-                              'SMANFES',
-                              'SMANINT',
-                              'SMANSTD'
-                            ].contains(riga.articolo?.codice)) {
-                              modifyDurataDialog(context, riga, nuovaQuantita,
-                                  ref);
-                            } else {
-                              if (columnName == 'quantita' ||
-                                  (columnName == 'note' && isNoteNullOrEmpty)) {
-                                //modifyDettagliDialog(context, articolo, ref, riga, quantity, notes);
-                              } else if (columnName == 'durata' ||
-                                  (columnName == 'note' &&
-                                      !isNoteNullOrEmpty)) {
-                                modifyDurataDialog(context, riga, nuovaQuantita, ref);
-                              }
-                            }
+      if ([
+        'SMANCAR',
+        'SMANCLI',
+        'SMANEST',
+        'SMANEST+40%',
+        'SMANESTFES',
+        'SMANFES',
+        'SMANINT',
+        'SMANSTD'
+      ].contains(riga.articolo?.codice ?? '')) {
+          modifyDurataDialog(context, riga, nuovaQuantita, ref);
+      } else {
+        if (columnName == 'quantita') {
+          modifyDettagliDialog(context, articolo, intervento, ref, riga, nuovaQuantita, qtaArt, notes ?? '');
+        }
+      }
+    }
                           }
                         },
                       ),
@@ -255,14 +265,14 @@ onPressed: () async {
     for (var riga in intervento.righe) {
       RigaInvio nuovaRiga;
       
-      if (riga.articolo?.descrizione == 'SMANCAR'        ||
-          riga.articolo?.descrizione == 'SMANCLI'        ||
-          riga.articolo?.descrizione == 'SMANEST'        ||
-          riga.articolo?.descrizione == 'SMANEST+40%'    ||
-          riga.articolo?.descrizione == 'SMANESTFES'     ||
-          riga.articolo?.descrizione == 'SMANFES'        ||
-          riga.articolo?.descrizione == 'SMANINT'        ||
-          riga.articolo?.descrizione =='SMANSTD') {
+      if (riga.articolo?.codice == 'SMANCAR'        ||
+          riga.articolo?.codice == 'SMANCLI'        ||
+          riga.articolo?.codice == 'SMANEST'        ||
+          riga.articolo?.codice == 'SMANEST+40%'    ||
+          riga.articolo?.codice == 'SMANESTFES'     ||
+          riga.articolo?.codice == 'SMANFES'        ||
+          riga.articolo?.codice == 'SMANINT'        ||
+          riga.articolo?.codice =='SMANSTD') {
         nuovaRiga = RigaInvio(
           id: null,
           idRiga: riga.idRiga,
@@ -276,11 +286,12 @@ onPressed: () async {
           tipoRiga: null,
           qta: riga.qta,
           dtOraIni: riga.dtOraIni.toString(),
-          dtOraFin: riga.dtOraIni.toString(),
+          dtOraFin: riga.dtOraFin.toString(),
           operatore: riga.operatore,
           note: null,
           noteDaStampare: null,
           matricola: riga.matricola,
+          dtOraIns: riga.dtOraIns.toString(),
           info: null,
           warning: null,
           error: null, 
@@ -304,6 +315,7 @@ onPressed: () async {
           note: null,
           noteDaStampare: null,
           matricola: riga.matricola,
+          dtOraIns: riga.dtOraIns.toString(),
           info: null,
           warning: null,
           error: null, 
@@ -336,32 +348,25 @@ onPressed: () async {
     final resultValue = resultMap['result'] as String;
     final errorList = resultMap['errorList'] as List<dynamic>;
 
-    if (resultValue == 'OK') {
-      final docId = resultMap['docId'] as int;
+if (resultValue == 'OK') {
+  final docId = resultMap['docId'] as int;
 
-      Map<String, dynamic> params = {
-                        //'docId': docId,
-                      };
+  Map<String, dynamic> params = {};
 
-                            Map<String, dynamic> resultMapDocId = {
-                        'docId': docId,
-                      };
+  Map<String, dynamic> resultMapDocId = {
+    'docId': docId,
+  };
 
-                      addRigaQuantita(articolo, ref, params, resultMapDocId);
+  addRigaQuantita(articolo, ref, params, resultMapDocId);
 
-                      chiudiGiornata = true;
+  chiudiGiornata = true;
 
-      List<PlatformFile> files = [];
-      _showAllegatiDialog(context, files, intervento.rifMatricolaCliente ?? '', ref, intervento.idTestata);
-
-      // var interventiDbProvider = ref.read(interventiDbRepositoryProvider.notifier);
-      // await interventiDbProvider.deleteInterventoById(intervento.idTestata);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Documento registrato con successo.'),
-          backgroundColor: Colors.green,
-        ),
-      );
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text('Documento registrato con successo.'),
+      backgroundColor: Colors.green,
+    ),
+  );
       //Navigator.pop(context);
     } else {
       final errorMessage = errorList.isNotEmpty ? errorList.first.toString() : 'Errore sconosciuto';
@@ -495,7 +500,46 @@ Future<void> _showAllegatiDialog(
   String descrizioneAllegato = '';
   Intervento? intervento;
 
-  if (!chiudiGiornata) {
+  var interventiDbProvider = ref.watch(interventiDbRepositoryProvider.notifier);
+
+  var interventi = await interventiDbProvider.build();
+
+  intervento = interventi.firstWhereOrNull((intervento) => intervento.idTestata == idTestata);
+
+  if (intervento == null) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.dangerous),
+                SizedBox(width: 2),
+                Text('Errore'),
+              ],
+          ),
+          content: const Text('Impossibile trovare l\'intervento'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+    return;
+  }
+
+var riga;
+var docId;
+
+if (idTestata < 0) {
+
+    if (!chiudiGiornata) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -522,44 +566,11 @@ Future<void> _showAllegatiDialog(
     );
     return;
   }
-
-  var interventiDbProvider = ref.watch(interventiDbRepositoryProvider.notifier);
-
-  var interventi = await interventiDbProvider.build();
-
-  intervento = interventi.firstWhereOrNull((intervento) => intervento.idTestata == idTestata);
-
-  if (intervento == null) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.dangerous),
-                const SizedBox(width: 2),
-                Text('Errore'),
-              ],
-          ),
-          content: const Text('Impossibile trovare l\'intervento'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-    return;
-  }
-
-final righe = intervento.righe;
-final riga = righe.lastWhereOrNull((riga) => riga.idTestata == idTestata);
-final docId = riga?.docId;
+  riga = intervento.righe.lastWhereOrNull((riga) => riga.idTestata == idTestata);
+  docId = riga?.docId;
+} else {
+  docId = intervento.idTestata;
+}
 
 
   List<PlatformFile> allegati = List.from(files);
@@ -1309,8 +1320,8 @@ String formatMinute(int minute) {
                             desMov: articolo.descrizione,
                             note: notes,
                             tipoMov: 40,
-                            mag: articolo.magazzino?.codice ?? '',
-                            umMov: articolo.unimis?.codice ?? '',
+                            mag: articolo.magazzino.codice ?? '',
+                            umMov: articolo.unimis.codice ?? '',
                             qtaMov: quantity.toDouble(),
                           );
 
@@ -1634,6 +1645,7 @@ Future<void> _sendEmail(BuildContext context, WidgetRef ref, Articolo articolo) 
    void modifyDettagliDialog(
        BuildContext context,
        Articolo? articolo,
+       Intervento intervento,
        WidgetRef ref,
        Riga riga,
        double? nuovaQuantita,
@@ -1643,6 +1655,7 @@ Future<void> _sendEmail(BuildContext context, WidgetRef ref, Articolo articolo) 
          TextEditingController(text: quantity.toString());
      TextEditingController notesController = TextEditingController(text: notes);
 
+
      final double initialQuantity = quantity;
 
      TextEditingController quantityControllerNew =
@@ -1651,7 +1664,12 @@ Future<void> _sendEmail(BuildContext context, WidgetRef ref, Articolo articolo) 
      final disponibilitaRepository =
          ref.read(disponibilitaArticoliApiRepositoryProvider);
      final dataLim = DateFormat('yyyy-MM-dd').format(DateTime.now());
-     String? codArt = articolo?.codice;
+     String? codArt = intervento.righe.firstWhere(
+    (element) => element.riga == riga.riga,).articolo?.codice;
+    String? artUnimis= intervento.righe.firstWhereOrNull(
+    (element) => element.riga == riga.riga)?.articolo?.umPrincipale;
+    String? descrArt = intervento.righe.firstWhere(
+    (element) => element.riga == riga.riga,).articolo?.descrizione;
      if (codArt == null) {
        return;
      }
@@ -1690,16 +1708,17 @@ Future<void> _sendEmail(BuildContext context, WidgetRef ref, Articolo articolo) 
                  mainAxisAlignment: MainAxisAlignment.center,
                  children: [
                    const SizedBox(width: 2),
-                   Text('$codArt ${unimis != null ? '($unimis)' : ''}'),
+                   Text('$codArt ${artUnimis != null ? '($artUnimis)' : ''}'),
                  ],
                ),
                const Divider(),
-               Text(
-                 articolo!.descrizione,
-                 textAlign: TextAlign.center,
-                 style:
-                     const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-               ),
+                Text(
+                  
+                  '$descrArt',
+                  textAlign: TextAlign.center,
+                  style:
+                      const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+                ),
              ],
            ),
            content: SizedBox(
@@ -1802,7 +1821,7 @@ Future<void> _sendEmail(BuildContext context, WidgetRef ref, Articolo articolo) 
                 riga.qta = quantity;
                 riga.note = notes;
                 ref
-                    .read(interventoApertoStateProvider.notifier).updateRigaQuantita(riga, nuovaQuantita, ref);
+                    .read(interventoApertoStateProvider.notifier).updateRigaQuantita(riga, quantity, ref);
 
                 final int quantityValue =
                     int.tryParse(quantityControllerNew.text) ?? 0;
@@ -1826,12 +1845,12 @@ Future<void> _sendEmail(BuildContext context, WidgetRef ref, Articolo articolo) 
                 final result = ref
                     .read(movimentoMagazzinoApiRepositoryProvider)
                     .updateQuantity(
-                        codArt: articolo.codice,
+                        codArt: articolo!.codice,
                         desMov: articolo.descrizione,
                         note: notes,
                         tipoMov: tipoMov,
-                        mag: articolo.magazzino?.descrizione ?? '',
-                        umMov: articolo.unimis?.codice ?? '',
+                        mag: articolo.magazzino.descrizione ?? '',
+                        umMov: articolo.unimis.codice ?? '',
                         qtaMov: qtaMov);
 
                 if (result != null) {
@@ -2008,7 +2027,6 @@ void modifyDurataDialog(BuildContext context, Riga riga, double? nuovaQuantita, 
 
     updateRiga(riga, nuovaQuantita, ref);
 
-    // Pop and re-push the page to refresh its state
     Navigator.pop(context);
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => RegistrazioneInterventoPage()));
   }
@@ -2068,17 +2086,17 @@ void modifyDurataDialog(BuildContext context, Riga riga, double? nuovaQuantita, 
                     },
                     style: ButtonStyle(
                       side: MaterialStateProperty.all<BorderSide>(
-                        const BorderSide(color: Colors.grey), // Bordo grigio
+                        const BorderSide(color: Colors.grey),
                       ),
                       minimumSize: MaterialStateProperty.all<Size>(const Size(
                           double.infinity,
-                          40)), // Larghezza espansa e altezza 50
+                          40)),
                     ),
                     child: const Text('Annulla',
                         style: TextStyle(color: Colors.black)),
                   ),
                 ),
-                const SizedBox(width: 8), // Spazio tra i pulsanti
+                const SizedBox(width: 8),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () async {
@@ -2090,10 +2108,9 @@ void modifyDurataDialog(BuildContext context, Riga riga, double? nuovaQuantita, 
 
                       notaText = controller.text;
 
-                      // this doesn't seem to be the place to do this
                        var prefs =
                            await ref.read(sharedPreferencesProvider.future);
-                       var operatore = prefs.getString('user');
+                       var operatore = prefs.getString('user')?.toUpperCase();
 
                        Map<String, dynamic> params = {
                          'operatore': operatore,
@@ -2105,17 +2122,16 @@ void modifyDurataDialog(BuildContext context, Riga riga, double? nuovaQuantita, 
                        };
 
                       addNota(ref, params);
-   // Pop and re-push the page to refresh its state
     Navigator.pop(context);
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => RegistrazioneInterventoPage()));
                     },
                     style: ButtonStyle(
                       side: MaterialStateProperty.all<BorderSide>(
-                        const BorderSide(color: Colors.grey), // Bordo grigio
+                        const BorderSide(color: Colors.grey),
                       ),
                       minimumSize: MaterialStateProperty.all<Size>(const Size(
                           double.infinity,
-                          40)), // Larghezza espansa e altezza 50
+                          40)), 
                     ),
                     child: const Text('Salva',
                         style: TextStyle(color: Colors.black)),
@@ -2128,112 +2144,4 @@ void modifyDurataDialog(BuildContext context, Riga riga, double? nuovaQuantita, 
       },
     );
   }
-
-  // final noteListProvider = StateNotifierProvider<NoteList, List<Note>>((ref) {
-  //   return NoteList();
-  // });
-
-  // void _stampaNellaPage(String nota, WidgetRef ref) {
-  //   ref.read(noteListProvider.notifier).add(nota);
-  // }
 }
-
-// class Note {
-//   String nota;
-//   bool isEditing;
-
-//   Note(this.nota, {this.isEditing = false});
-
-
-//   Note copyWith({String? nota, bool? isEditing}) {
-//     return Note(
-//       nota ?? this.nota,
-//       isEditing: isEditing ?? this.isEditing,
-//     );
-//   }
-// }
-
-// class NoteList extends StateNotifier<List<Note>> {
-//   NoteList() : super([]);
-
-//   void add(String nota) {
-//     state = [...state, Note(nota)];
-//   }
-
-//   void remove(int index) {
-//     state = List.from(state)..removeAt(index);
-//   }
-
-//   // Metodo per impostare lo stato di modifica per una nota specifica
-//   void setEditing(int index, bool value) {
-//     if (index >= 0 && index < state.length) {
-//       state = [
-//         ...state.sublist(0, index),
-//         state[index].copyWith(isEditing: value),
-//         ...state.sublist(index + 1),
-//       ];
-//     }
-//   }
-// }
-
-
-
-// void _openCameraInterface(BuildContext context) {
-//    Navigator.push(
-//      context,
-//      MaterialPageRoute(
-//        builder: (context) => CameraPreviewPage(),
-//      ),
-//    );
-//  }
-
-//  class CameraPreviewPage extends StatefulWidget {
-//    @override
-//    _CameraPreviewPageState createState() => _CameraPreviewPageState();
-//  }
-
-//  class _CameraPreviewPageState extends State<CameraPreviewPage> {
-//    late CameraController _controller;
-
-//    @override
-//    void initState() {
-//      super.initState();
-//      _initializeCamera();
-//    }
-
-//    Future<void> _initializeCamera() async {
-//      final cameras = await availableCameras();
-//      _controller = CameraController(
-//        cameras[0],
-//        ResolutionPreset.medium,
-//      );
-//      await _controller.initialize();
-//      if (mounted) {
-//        setState(() {});
-//      }
-//    }
-
-//    @override
-//    Widget build(BuildContext context) {
-//      if (!_controller.value.isInitialized) {
-//        return Center(
-//          child: CircularProgressIndicator(),
-//        );
-//      }
-
-//      return Scaffold(
-//        appBar: AppBar(title: Text('Camera Preview')),
-//        body: CameraPreview(_controller),
-//      );
-//    }
-
-//    @override
-//    void dispose() {
-//      _controller.dispose();
-//      super.dispose();
-//    }
-//  }
-
-
-
-

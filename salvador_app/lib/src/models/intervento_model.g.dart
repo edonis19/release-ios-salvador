@@ -603,6 +603,7 @@ Intervento deserializeIntervento(IsarReader reader) {
               origine: null,
               matricola: null,
               gestioneLotti: null,
+              dtOraIns: null,
               recordCancellato: null,
               recordSelezionato: null,
               recordInviato: null,
@@ -672,6 +673,7 @@ Intervento deserializeIntervento(IsarReader reader) {
                 origine: null,
                 matricola: null,
                 gestioneLotti: null,
+                dtOraIns: null,
                 recordCancellato: null,
                 recordSelezionato: null,
                 recordInviato: null,
@@ -966,6 +968,7 @@ dynamic deserializeInterventoProp(IsarReader reader, int property) {
                   origine: null,
                   matricola: null,
                   gestioneLotti: null,
+                  dtOraIns: null,
                   recordCancellato: null,
                   recordSelezionato: null,
                   recordInviato: null,
@@ -1035,6 +1038,7 @@ dynamic deserializeInterventoProp(IsarReader reader, int property) {
                     origine: null,
                     matricola: null,
                     gestioneLotti: null,
+                    dtOraIns: null,
                     recordCancellato: null,
                     recordSelezionato: null,
                     recordInviato: null,
@@ -15447,6 +15451,10 @@ const RigaSchema = IsarGeneratedSchema(
         type: IsarType.bool,
       ),
       IsarPropertySchema(
+        name: 'dtOraIns',
+        type: IsarType.dateTime,
+      ),
+      IsarPropertySchema(
         name: 'recordCancellato',
         type: IsarType.bool,
       ),
@@ -15690,16 +15698,10 @@ int serializeRiga(IsarWriter writer, Riga object) {
       IsarCore.writeBool(writer, 53, value);
     }
   }
+  IsarCore.writeLong(writer, 54,
+      object.dtOraIns?.toUtc().microsecondsSinceEpoch ?? -9223372036854775808);
   {
     final value = object.recordCancellato;
-    if (value == null) {
-      IsarCore.writeNull(writer, 54);
-    } else {
-      IsarCore.writeBool(writer, 54, value);
-    }
-  }
-  {
-    final value = object.recordSelezionato;
     if (value == null) {
       IsarCore.writeNull(writer, 55);
     } else {
@@ -15707,7 +15709,7 @@ int serializeRiga(IsarWriter writer, Riga object) {
     }
   }
   {
-    final value = object.recordInviato;
+    final value = object.recordSelezionato;
     if (value == null) {
       IsarCore.writeNull(writer, 56);
     } else {
@@ -15715,15 +15717,15 @@ int serializeRiga(IsarWriter writer, Riga object) {
     }
   }
   {
-    final value = object.info;
+    final value = object.recordInviato;
     if (value == null) {
       IsarCore.writeNull(writer, 57);
     } else {
-      IsarCore.writeString(writer, 57, value);
+      IsarCore.writeBool(writer, 57, value);
     }
   }
   {
-    final value = object.warning;
+    final value = object.info;
     if (value == null) {
       IsarCore.writeNull(writer, 58);
     } else {
@@ -15731,7 +15733,7 @@ int serializeRiga(IsarWriter writer, Riga object) {
     }
   }
   {
-    final value = object.error;
+    final value = object.warning;
     if (value == null) {
       IsarCore.writeNull(writer, 59);
     } else {
@@ -15739,7 +15741,7 @@ int serializeRiga(IsarWriter writer, Riga object) {
     }
   }
   {
-    final value = object.matricole;
+    final value = object.error;
     if (value == null) {
       IsarCore.writeNull(writer, 60);
     } else {
@@ -15747,14 +15749,22 @@ int serializeRiga(IsarWriter writer, Riga object) {
     }
   }
   {
-    final value = object.lotti;
+    final value = object.matricole;
     if (value == null) {
       IsarCore.writeNull(writer, 61);
     } else {
       IsarCore.writeString(writer, 61, value);
     }
   }
-  IsarCore.writeLong(writer, 62, object.docId ?? -9223372036854775808);
+  {
+    final value = object.lotti;
+    if (value == null) {
+      IsarCore.writeNull(writer, 62);
+    } else {
+      IsarCore.writeString(writer, 62, value);
+    }
+  }
+  IsarCore.writeLong(writer, 63, object.docId ?? -9223372036854775808);
   return 0;
 }
 
@@ -16120,43 +16130,53 @@ Riga deserializeRiga(IsarReader reader) {
       _gestioneLotti = IsarCore.readBool(reader, 53);
     }
   }
+  final DateTime? _dtOraIns;
+  {
+    final value = IsarCore.readLong(reader, 54);
+    if (value == -9223372036854775808) {
+      _dtOraIns = null;
+    } else {
+      _dtOraIns =
+          DateTime.fromMicrosecondsSinceEpoch(value, isUtc: true).toLocal();
+    }
+  }
   final bool? _recordCancellato;
   {
-    if (IsarCore.readNull(reader, 54)) {
+    if (IsarCore.readNull(reader, 55)) {
       _recordCancellato = null;
     } else {
-      _recordCancellato = IsarCore.readBool(reader, 54);
+      _recordCancellato = IsarCore.readBool(reader, 55);
     }
   }
   final bool? _recordSelezionato;
   {
-    if (IsarCore.readNull(reader, 55)) {
+    if (IsarCore.readNull(reader, 56)) {
       _recordSelezionato = null;
     } else {
-      _recordSelezionato = IsarCore.readBool(reader, 55);
+      _recordSelezionato = IsarCore.readBool(reader, 56);
     }
   }
   final bool? _recordInviato;
   {
-    if (IsarCore.readNull(reader, 56)) {
+    if (IsarCore.readNull(reader, 57)) {
       _recordInviato = null;
     } else {
-      _recordInviato = IsarCore.readBool(reader, 56);
+      _recordInviato = IsarCore.readBool(reader, 57);
     }
   }
   final String? _info;
-  _info = IsarCore.readString(reader, 57);
+  _info = IsarCore.readString(reader, 58);
   final String? _warning;
-  _warning = IsarCore.readString(reader, 58);
+  _warning = IsarCore.readString(reader, 59);
   final String? _error;
-  _error = IsarCore.readString(reader, 59);
+  _error = IsarCore.readString(reader, 60);
   final String? _matricole;
-  _matricole = IsarCore.readString(reader, 60);
+  _matricole = IsarCore.readString(reader, 61);
   final String? _lotti;
-  _lotti = IsarCore.readString(reader, 61);
+  _lotti = IsarCore.readString(reader, 62);
   final int? _docId;
   {
-    final value = IsarCore.readLong(reader, 62);
+    final value = IsarCore.readLong(reader, 63);
     if (value == -9223372036854775808) {
       _docId = null;
     } else {
@@ -16217,6 +16237,7 @@ Riga deserializeRiga(IsarReader reader) {
     origine: _origine,
     matricola: _matricola,
     gestioneLotti: _gestioneLotti,
+    dtOraIns: _dtOraIns,
     recordCancellato: _recordCancellato,
     recordSelezionato: _recordSelezionato,
     recordInviato: _recordInviato,
@@ -22780,20 +22801,20 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordCancellatoIsNull() {
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> dtOraInsIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const IsNullCondition(property: 54));
     });
   }
 
-  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordCancellatoIsNotNull() {
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> dtOraInsIsNotNull() {
     return QueryBuilder.apply(not(), (query) {
       return query.addFilterCondition(const IsNullCondition(property: 54));
     });
   }
 
-  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordCancellatoEqualTo(
-    bool? value,
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> dtOraInsEqualTo(
+    DateTime? value,
   ) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -22805,19 +22826,86 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordSelezionatoIsNull() {
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> dtOraInsGreaterThan(
+    DateTime? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterCondition(
+          property: 54,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> dtOraInsGreaterThanOrEqualTo(
+    DateTime? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        GreaterOrEqualCondition(
+          property: 54,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> dtOraInsLessThan(
+    DateTime? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessCondition(
+          property: 54,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> dtOraInsLessThanOrEqualTo(
+    DateTime? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        LessOrEqualCondition(
+          property: 54,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> dtOraInsBetween(
+    DateTime? lower,
+    DateTime? upper,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        BetweenCondition(
+          property: 54,
+          lower: lower,
+          upper: upper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordCancellatoIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const IsNullCondition(property: 55));
     });
   }
 
-  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordSelezionatoIsNotNull() {
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordCancellatoIsNotNull() {
     return QueryBuilder.apply(not(), (query) {
       return query.addFilterCondition(const IsNullCondition(property: 55));
     });
   }
 
-  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordSelezionatoEqualTo(
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordCancellatoEqualTo(
     bool? value,
   ) {
     return QueryBuilder.apply(this, (query) {
@@ -22830,19 +22918,19 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordInviatoIsNull() {
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordSelezionatoIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const IsNullCondition(property: 56));
     });
   }
 
-  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordInviatoIsNotNull() {
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordSelezionatoIsNotNull() {
     return QueryBuilder.apply(not(), (query) {
       return query.addFilterCondition(const IsNullCondition(property: 56));
     });
   }
 
-  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordInviatoEqualTo(
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordSelezionatoEqualTo(
     bool? value,
   ) {
     return QueryBuilder.apply(this, (query) {
@@ -22855,15 +22943,40 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Riga, Riga, QAfterFilterCondition> infoIsNull() {
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordInviatoIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const IsNullCondition(property: 57));
     });
   }
 
-  QueryBuilder<Riga, Riga, QAfterFilterCondition> infoIsNotNull() {
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordInviatoIsNotNull() {
     return QueryBuilder.apply(not(), (query) {
       return query.addFilterCondition(const IsNullCondition(property: 57));
+    });
+  }
+
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> recordInviatoEqualTo(
+    bool? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        EqualCondition(
+          property: 57,
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> infoIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 58));
+    });
+  }
+
+  QueryBuilder<Riga, Riga, QAfterFilterCondition> infoIsNotNull() {
+    return QueryBuilder.apply(not(), (query) {
+      return query.addFilterCondition(const IsNullCondition(property: 58));
     });
   }
 
@@ -22874,7 +22987,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 57,
+          property: 58,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -22889,7 +23002,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterCondition(
-          property: 57,
+          property: 58,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -22904,7 +23017,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterOrEqualCondition(
-          property: 57,
+          property: 58,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -22919,7 +23032,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessCondition(
-          property: 57,
+          property: 58,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -22934,7 +23047,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessOrEqualCondition(
-          property: 57,
+          property: 58,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -22950,7 +23063,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         BetweenCondition(
-          property: 57,
+          property: 58,
           lower: lower,
           upper: upper,
           caseSensitive: caseSensitive,
@@ -22966,7 +23079,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         StartsWithCondition(
-          property: 57,
+          property: 58,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -22981,7 +23094,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EndsWithCondition(
-          property: 57,
+          property: 58,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -22994,7 +23107,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         ContainsCondition(
-          property: 57,
+          property: 58,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23007,7 +23120,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         MatchesCondition(
-          property: 57,
+          property: 58,
           wildcard: pattern,
           caseSensitive: caseSensitive,
         ),
@@ -23019,7 +23132,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const EqualCondition(
-          property: 57,
+          property: 58,
           value: '',
         ),
       );
@@ -23030,7 +23143,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const GreaterCondition(
-          property: 57,
+          property: 58,
           value: '',
         ),
       );
@@ -23039,13 +23152,13 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
 
   QueryBuilder<Riga, Riga, QAfterFilterCondition> warningIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 58));
+      return query.addFilterCondition(const IsNullCondition(property: 59));
     });
   }
 
   QueryBuilder<Riga, Riga, QAfterFilterCondition> warningIsNotNull() {
     return QueryBuilder.apply(not(), (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 58));
+      return query.addFilterCondition(const IsNullCondition(property: 59));
     });
   }
 
@@ -23056,7 +23169,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 58,
+          property: 59,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23071,7 +23184,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterCondition(
-          property: 58,
+          property: 59,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23086,7 +23199,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterOrEqualCondition(
-          property: 58,
+          property: 59,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23101,7 +23214,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessCondition(
-          property: 58,
+          property: 59,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23116,7 +23229,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessOrEqualCondition(
-          property: 58,
+          property: 59,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23132,7 +23245,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         BetweenCondition(
-          property: 58,
+          property: 59,
           lower: lower,
           upper: upper,
           caseSensitive: caseSensitive,
@@ -23148,7 +23261,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         StartsWithCondition(
-          property: 58,
+          property: 59,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23163,7 +23276,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EndsWithCondition(
-          property: 58,
+          property: 59,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23176,7 +23289,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         ContainsCondition(
-          property: 58,
+          property: 59,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23189,7 +23302,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         MatchesCondition(
-          property: 58,
+          property: 59,
           wildcard: pattern,
           caseSensitive: caseSensitive,
         ),
@@ -23201,7 +23314,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const EqualCondition(
-          property: 58,
+          property: 59,
           value: '',
         ),
       );
@@ -23212,7 +23325,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const GreaterCondition(
-          property: 58,
+          property: 59,
           value: '',
         ),
       );
@@ -23221,13 +23334,13 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
 
   QueryBuilder<Riga, Riga, QAfterFilterCondition> errorIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 59));
+      return query.addFilterCondition(const IsNullCondition(property: 60));
     });
   }
 
   QueryBuilder<Riga, Riga, QAfterFilterCondition> errorIsNotNull() {
     return QueryBuilder.apply(not(), (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 59));
+      return query.addFilterCondition(const IsNullCondition(property: 60));
     });
   }
 
@@ -23238,7 +23351,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 59,
+          property: 60,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23253,7 +23366,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterCondition(
-          property: 59,
+          property: 60,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23268,7 +23381,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterOrEqualCondition(
-          property: 59,
+          property: 60,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23283,7 +23396,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessCondition(
-          property: 59,
+          property: 60,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23298,7 +23411,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessOrEqualCondition(
-          property: 59,
+          property: 60,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23314,7 +23427,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         BetweenCondition(
-          property: 59,
+          property: 60,
           lower: lower,
           upper: upper,
           caseSensitive: caseSensitive,
@@ -23330,7 +23443,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         StartsWithCondition(
-          property: 59,
+          property: 60,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23345,7 +23458,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EndsWithCondition(
-          property: 59,
+          property: 60,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23358,7 +23471,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         ContainsCondition(
-          property: 59,
+          property: 60,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23371,7 +23484,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         MatchesCondition(
-          property: 59,
+          property: 60,
           wildcard: pattern,
           caseSensitive: caseSensitive,
         ),
@@ -23383,7 +23496,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const EqualCondition(
-          property: 59,
+          property: 60,
           value: '',
         ),
       );
@@ -23394,7 +23507,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const GreaterCondition(
-          property: 59,
+          property: 60,
           value: '',
         ),
       );
@@ -23403,13 +23516,13 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
 
   QueryBuilder<Riga, Riga, QAfterFilterCondition> matricoleIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 60));
+      return query.addFilterCondition(const IsNullCondition(property: 61));
     });
   }
 
   QueryBuilder<Riga, Riga, QAfterFilterCondition> matricoleIsNotNull() {
     return QueryBuilder.apply(not(), (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 60));
+      return query.addFilterCondition(const IsNullCondition(property: 61));
     });
   }
 
@@ -23420,7 +23533,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 60,
+          property: 61,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23435,7 +23548,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterCondition(
-          property: 60,
+          property: 61,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23450,7 +23563,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterOrEqualCondition(
-          property: 60,
+          property: 61,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23465,7 +23578,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessCondition(
-          property: 60,
+          property: 61,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23480,7 +23593,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessOrEqualCondition(
-          property: 60,
+          property: 61,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23496,7 +23609,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         BetweenCondition(
-          property: 60,
+          property: 61,
           lower: lower,
           upper: upper,
           caseSensitive: caseSensitive,
@@ -23512,7 +23625,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         StartsWithCondition(
-          property: 60,
+          property: 61,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23527,7 +23640,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EndsWithCondition(
-          property: 60,
+          property: 61,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23541,7 +23654,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         ContainsCondition(
-          property: 60,
+          property: 61,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23555,7 +23668,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         MatchesCondition(
-          property: 60,
+          property: 61,
           wildcard: pattern,
           caseSensitive: caseSensitive,
         ),
@@ -23567,7 +23680,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const EqualCondition(
-          property: 60,
+          property: 61,
           value: '',
         ),
       );
@@ -23578,7 +23691,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const GreaterCondition(
-          property: 60,
+          property: 61,
           value: '',
         ),
       );
@@ -23587,13 +23700,13 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
 
   QueryBuilder<Riga, Riga, QAfterFilterCondition> lottiIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 61));
+      return query.addFilterCondition(const IsNullCondition(property: 62));
     });
   }
 
   QueryBuilder<Riga, Riga, QAfterFilterCondition> lottiIsNotNull() {
     return QueryBuilder.apply(not(), (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 61));
+      return query.addFilterCondition(const IsNullCondition(property: 62));
     });
   }
 
@@ -23604,7 +23717,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 61,
+          property: 62,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23619,7 +23732,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterCondition(
-          property: 61,
+          property: 62,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23634,7 +23747,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterOrEqualCondition(
-          property: 61,
+          property: 62,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23649,7 +23762,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessCondition(
-          property: 61,
+          property: 62,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23664,7 +23777,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessOrEqualCondition(
-          property: 61,
+          property: 62,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23680,7 +23793,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         BetweenCondition(
-          property: 61,
+          property: 62,
           lower: lower,
           upper: upper,
           caseSensitive: caseSensitive,
@@ -23696,7 +23809,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         StartsWithCondition(
-          property: 61,
+          property: 62,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23711,7 +23824,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EndsWithCondition(
-          property: 61,
+          property: 62,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23724,7 +23837,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         ContainsCondition(
-          property: 61,
+          property: 62,
           value: value,
           caseSensitive: caseSensitive,
         ),
@@ -23737,7 +23850,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         MatchesCondition(
-          property: 61,
+          property: 62,
           wildcard: pattern,
           caseSensitive: caseSensitive,
         ),
@@ -23749,7 +23862,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const EqualCondition(
-          property: 61,
+          property: 62,
           value: '',
         ),
       );
@@ -23760,7 +23873,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         const GreaterCondition(
-          property: 61,
+          property: 62,
           value: '',
         ),
       );
@@ -23769,13 +23882,13 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
 
   QueryBuilder<Riga, Riga, QAfterFilterCondition> docIdIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 62));
+      return query.addFilterCondition(const IsNullCondition(property: 63));
     });
   }
 
   QueryBuilder<Riga, Riga, QAfterFilterCondition> docIdIsNotNull() {
     return QueryBuilder.apply(not(), (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 62));
+      return query.addFilterCondition(const IsNullCondition(property: 63));
     });
   }
 
@@ -23785,7 +23898,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         EqualCondition(
-          property: 62,
+          property: 63,
           value: value,
         ),
       );
@@ -23798,7 +23911,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterCondition(
-          property: 62,
+          property: 63,
           value: value,
         ),
       );
@@ -23811,7 +23924,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         GreaterOrEqualCondition(
-          property: 62,
+          property: 63,
           value: value,
         ),
       );
@@ -23824,7 +23937,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessCondition(
-          property: 62,
+          property: 63,
           value: value,
         ),
       );
@@ -23837,7 +23950,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         LessOrEqualCondition(
-          property: 62,
+          property: 63,
           value: value,
         ),
       );
@@ -23851,7 +23964,7 @@ extension RigaQueryFilter on QueryBuilder<Riga, Riga, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         BetweenCondition(
-          property: 62,
+          property: 63,
           lower: lower,
           upper: upper,
         ),
@@ -32754,6 +32867,9 @@ _$RigaImpl _$$RigaImplFromJson(Map<String, dynamic> json) => _$RigaImpl(
       origine: json['origine'] as String?,
       matricola: json['matricola'] as String?,
       gestioneLotti: json['gestioneLotti'] as bool?,
+      dtOraIns: json['dtOraIns'] == null
+          ? null
+          : DateTime.parse(json['dtOraIns'] as String),
       recordCancellato: json['recordCancellato'] as bool?,
       recordSelezionato: json['recordSelezionato'] as bool?,
       recordInviato: json['recordInviato'] as bool?,
@@ -32820,6 +32936,7 @@ Map<String, dynamic> _$$RigaImplToJson(_$RigaImpl instance) =>
       'origine': instance.origine,
       'matricola': instance.matricola,
       'gestioneLotti': instance.gestioneLotti,
+      'dtOraIns': instance.dtOraIns?.toIso8601String(),
       'recordCancellato': instance.recordCancellato,
       'recordSelezionato': instance.recordSelezionato,
       'recordInviato': instance.recordInviato,

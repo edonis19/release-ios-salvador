@@ -1972,6 +1972,8 @@ mixin _$Riga {
   set matricola(String? value) => throw _privateConstructorUsedError;
   bool? get gestioneLotti => throw _privateConstructorUsedError;
   set gestioneLotti(bool? value) => throw _privateConstructorUsedError;
+  DateTime? get dtOraIns => throw _privateConstructorUsedError;
+  set dtOraIns(DateTime? value) => throw _privateConstructorUsedError;
   bool? get recordCancellato => throw _privateConstructorUsedError;
   set recordCancellato(bool? value) => throw _privateConstructorUsedError;
   bool? get recordSelezionato => throw _privateConstructorUsedError;
@@ -2055,6 +2057,7 @@ abstract class $RigaCopyWith<$Res> {
       String? origine,
       String? matricola,
       bool? gestioneLotti,
+      DateTime? dtOraIns,
       bool? recordCancellato,
       bool? recordSelezionato,
       bool? recordInviato,
@@ -2134,6 +2137,7 @@ class _$RigaCopyWithImpl<$Res, $Val extends Riga>
     Object? origine = freezed,
     Object? matricola = freezed,
     Object? gestioneLotti = freezed,
+    Object? dtOraIns = freezed,
     Object? recordCancellato = freezed,
     Object? recordSelezionato = freezed,
     Object? recordInviato = freezed,
@@ -2357,6 +2361,10 @@ class _$RigaCopyWithImpl<$Res, $Val extends Riga>
           ? _value.gestioneLotti
           : gestioneLotti // ignore: cast_nullable_to_non_nullable
               as bool?,
+      dtOraIns: freezed == dtOraIns
+          ? _value.dtOraIns
+          : dtOraIns // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       recordCancellato: freezed == recordCancellato
           ? _value.recordCancellato
           : recordCancellato // ignore: cast_nullable_to_non_nullable
@@ -2470,6 +2478,7 @@ abstract class _$$RigaImplCopyWith<$Res> implements $RigaCopyWith<$Res> {
       String? origine,
       String? matricola,
       bool? gestioneLotti,
+      DateTime? dtOraIns,
       bool? recordCancellato,
       bool? recordSelezionato,
       bool? recordInviato,
@@ -2547,6 +2556,7 @@ class __$$RigaImplCopyWithImpl<$Res>
     Object? origine = freezed,
     Object? matricola = freezed,
     Object? gestioneLotti = freezed,
+    Object? dtOraIns = freezed,
     Object? recordCancellato = freezed,
     Object? recordSelezionato = freezed,
     Object? recordInviato = freezed,
@@ -2770,6 +2780,10 @@ class __$$RigaImplCopyWithImpl<$Res>
           ? _value.gestioneLotti
           : gestioneLotti // ignore: cast_nullable_to_non_nullable
               as bool?,
+      dtOraIns: freezed == dtOraIns
+          ? _value.dtOraIns
+          : dtOraIns // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       recordCancellato: freezed == recordCancellato
           ? _value.recordCancellato
           : recordCancellato // ignore: cast_nullable_to_non_nullable
@@ -2867,6 +2881,7 @@ class _$RigaImpl implements _Riga {
       required this.origine,
       required this.matricola,
       required this.gestioneLotti,
+      required this.dtOraIns,
       required this.recordCancellato,
       required this.recordSelezionato,
       required this.recordInviato,
@@ -2987,6 +3002,8 @@ class _$RigaImpl implements _Riga {
   @override
   bool? gestioneLotti;
   @override
+  DateTime? dtOraIns;
+  @override
   bool? recordCancellato;
   @override
   bool? recordSelezionato;
@@ -3007,7 +3024,7 @@ class _$RigaImpl implements _Riga {
 
   @override
   String toString() {
-    return 'Riga(id: $id, idTestata: $idTestata, idRiga: $idRiga, numOrdine: $numOrdine, riga: $riga, descrizione: $descrizione, barcode: $barcode, statusEvasione: $statusEvasione, articolo: $articolo, tipoRiga: $tipoRiga, destDes: $destDes, destInd: $destInd, pagamento: $pagamento, scontoPag: $scontoPag, sc1Tes: $sc1Tes, sc2Tes: $sc2Tes, sc3Tes: $sc3Tes, cigCup: $cigCup, codIvaTes: $codIvaTes, colli: $colli, qta: $qta, qtaEvasa: $qtaEvasa, qtaResidua: $qtaResidua, qtaGiacenza: $qtaGiacenza, qtaInserita: $qtaInserita, iva: $iva, sconto1: $sconto1, sconto2: $sconto2, sconto3: $sconto3, sconto4: $sconto4, sconto5: $sconto5, sconto6: $sconto6, magg1: $magg1, magg2: $magg2, magg3: $magg3, magg4: $magg4, magg5: $magg5, magg6: $magg6, prezzo: $prezzo, moltPrz: $moltPrz, prezzoUni: $prezzoUni, nettoRiga: $nettoRiga, dtOraIni: $dtOraIni, dtOraFin: $dtOraFin, operatore: $operatore, saldaRiga: $saldaRiga, dataRichConsegna: $dataRichConsegna, dataConfConsegna: $dataConfConsegna, note: $note, noteDaStampare: $noteDaStampare, origine: $origine, matricola: $matricola, gestioneLotti: $gestioneLotti, recordCancellato: $recordCancellato, recordSelezionato: $recordSelezionato, recordInviato: $recordInviato, info: $info, warning: $warning, error: $error, matricole: $matricole, lotti: $lotti, docId: $docId)';
+    return 'Riga(id: $id, idTestata: $idTestata, idRiga: $idRiga, numOrdine: $numOrdine, riga: $riga, descrizione: $descrizione, barcode: $barcode, statusEvasione: $statusEvasione, articolo: $articolo, tipoRiga: $tipoRiga, destDes: $destDes, destInd: $destInd, pagamento: $pagamento, scontoPag: $scontoPag, sc1Tes: $sc1Tes, sc2Tes: $sc2Tes, sc3Tes: $sc3Tes, cigCup: $cigCup, codIvaTes: $codIvaTes, colli: $colli, qta: $qta, qtaEvasa: $qtaEvasa, qtaResidua: $qtaResidua, qtaGiacenza: $qtaGiacenza, qtaInserita: $qtaInserita, iva: $iva, sconto1: $sconto1, sconto2: $sconto2, sconto3: $sconto3, sconto4: $sconto4, sconto5: $sconto5, sconto6: $sconto6, magg1: $magg1, magg2: $magg2, magg3: $magg3, magg4: $magg4, magg5: $magg5, magg6: $magg6, prezzo: $prezzo, moltPrz: $moltPrz, prezzoUni: $prezzoUni, nettoRiga: $nettoRiga, dtOraIni: $dtOraIni, dtOraFin: $dtOraFin, operatore: $operatore, saldaRiga: $saldaRiga, dataRichConsegna: $dataRichConsegna, dataConfConsegna: $dataConfConsegna, note: $note, noteDaStampare: $noteDaStampare, origine: $origine, matricola: $matricola, gestioneLotti: $gestioneLotti, dtOraIns: $dtOraIns, recordCancellato: $recordCancellato, recordSelezionato: $recordSelezionato, recordInviato: $recordInviato, info: $info, warning: $warning, error: $error, matricole: $matricole, lotti: $lotti, docId: $docId)';
   }
 
   @JsonKey(ignore: true)
@@ -3079,6 +3096,7 @@ abstract class _Riga implements Riga {
       required String? origine,
       required String? matricola,
       required bool? gestioneLotti,
+      required DateTime? dtOraIns,
       required bool? recordCancellato,
       required bool? recordSelezionato,
       required bool? recordInviato,
@@ -3250,6 +3268,9 @@ abstract class _Riga implements Riga {
   @override
   bool? get gestioneLotti;
   set gestioneLotti(bool? value);
+  @override
+  DateTime? get dtOraIns;
+  set dtOraIns(DateTime? value);
   @override
   bool? get recordCancellato;
   set recordCancellato(bool? value);

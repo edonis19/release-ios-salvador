@@ -53,23 +53,29 @@ List<DataGridRow> get rows {
       String? codiceArticolo = riga.articolo?.codice ?? '';
       String? descrizioneArticolo = riga.articolo?.descrizione ?? '';
       String operatore = riga.operatore ?? '';
+      String formattedDate = DateFormat('dd/MM/yyyy').format(riga.dtOraIns!);
       double? qta = riga.qta;
       final int? numRiga = riga.riga;
 
-      rowsIntervento.add(DataGridRow(cells: [
-        DataGridCell<int?>(columnName: 'idRiga', value: numRiga),
-        const DataGridCell<String>(columnName: 'elimina', value: 'RO'),
-        DataGridCell<String>(columnName: 'documento', value: intervento.numDoc),
-        DataGridCell<String>(columnName: 'codice', value: codiceArticolo),
-        DataGridCell<String>(columnName: 'descrizione', value: descrizioneArticolo),
-        DataGridCell<String>(columnName: 'operatore', value: operatore),
-        const DataGridCell<String>(columnName: 'dataInserimento', value: ''),
-        DataGridCell<Object>(columnName: 'quantita', value: qta),
-         DataGridCell<String>(columnName: 'note', value: riga.descrizione ?? riga.note ?? ''),
-        const DataGridCell<String>(columnName: 'unimiscodice', value: null),
-        const DataGridCell<String>(columnName: 'magazzino', value: null),
-        ],
-      ));
+rowsIntervento.add(DataGridRow(cells: [
+  DataGridCell<int?>(columnName: 'idRiga', value: numRiga),
+  const DataGridCell<String>(columnName: 'elimina', value: 'RO'),
+  DataGridCell<String>(columnName: 'documento', value: intervento.numDoc),
+  DataGridCell<String>(columnName: 'codice', value: codiceArticolo),
+  DataGridCell<String>(columnName: 'descrizione', value: descrizioneArticolo),
+  DataGridCell<String>(columnName: 'operatore', value: operatore),
+  DataGridCell<String>(columnName: 'dataInserimento', value: formattedDate),
+  DataGridCell<Object>(
+    columnName: 'quantita',
+    value: qta == 0.0 ? '' : qta.toString(), // Mostra una stringa vuota se qta è 0.0
+  ),
+  DataGridCell<String>(
+    columnName: 'note',
+    value: riga.descrizione ?? riga.note ?? '',
+  ),
+  const DataGridCell<String>(columnName: 'unimiscodice', value: null),
+  const DataGridCell<String>(columnName: 'magazzino', value: null),
+]));
     } else {
       final int? idRiga = riga.idRiga;
       String righeOperatore = riga.operatore ?? '';

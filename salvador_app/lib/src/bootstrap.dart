@@ -45,17 +45,17 @@ Future<ProviderContainer> bootstrap() async {
 
           return articoli;
         }),
-        clientiApiProvider.overrideWith((ref) async {
-          final jsonString =
-              await rootBundle.loadString('assets/json/clienti.json');
-          final dataClienti = jsonDecode(jsonString);
+        // clientiApiProvider.overrideWith((ref) async {
+        //   final jsonString =
+        //       await rootBundle.loadString('assets/json/clienti.json');
+        //   final dataClienti = jsonDecode(jsonString);
 
-          final List<dynamic> rawData = dataClienti;
-          final clienti =
-              rawData.map((data) => cliente.Cliente.fromJson(data)).toList();
+        //   final List<dynamic> rawData = dataClienti;
+        //   final clienti =
+        //       rawData.map((data) => cliente.Cliente.fromJson(data)).toList();
 
-          return clienti;
-        }),
+        //   return clienti;
+        // }),
         //  interventiApiProvider.call().overrideWith((ref) async {
         //    final jsonString =
         //        await rootBundle.loadString('assets/json/ordini.json');

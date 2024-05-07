@@ -659,7 +659,7 @@ if (idTestata < 0) {
                                   final result =
                                       await FilePicker.platform.pickFiles(
                                     allowMultiple: true,
-                                    type: FileType.any,
+                                    type: FileType.custom,
                                     allowedExtensions: [
                                       'jpg',
                                       'pdf',
@@ -673,6 +673,10 @@ if (idTestata < 0) {
                                       allegati.addAll(result.files);
                                     });
                                   }
+                                  
+                                  final file = result?.files.first;
+                                  _openFile(file as String);
+
                                   Navigator.pop(context);
                                 },
                                 child: const Text('Scegli File'),
